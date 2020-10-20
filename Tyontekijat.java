@@ -2,12 +2,9 @@ package application;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Time;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
