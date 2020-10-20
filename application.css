@@ -1,0 +1,32 @@
+.button{
+	-fx-background-color: #778899;
+	-fx-border-radius: 20;
+	 -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 );
+}
+
+.fontti{
+	-fx-font-size: 14px;
+}
+
+.fontti2{
+	-fx-font-size: 18px;
+}
+
+
+.taulukko{
+	-fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 );
+}	
+
+.title-bar { 
+  -fx-background-color: #778899;
+ }
+ 
+.kehys {
+    -fx-border-style: none;
+    -fx-border-color: #CD853F;
+    -fx-border-width: 2;
+}
+
+.tausta{
+	-fx-background-color: #CD853F;
+}
