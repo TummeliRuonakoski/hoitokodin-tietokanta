@@ -1,0 +1,45 @@
+// TYÖNTEKIJÄT
+
+tyontekija | CREATE TABLE `tyontekija` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nimi` varchar(40) DEFAULT NULL,
+  `hetu` char(11) DEFAULT NULL,
+  `osoite` varchar(70) DEFAULT NULL,
+  `puhelinnumero` varchar(15) DEFAULT NULL,
+  `ammatti` varchar(20) DEFAULT NULL,
+  `tunnus` varchar(15) DEFAULT NULL,
+  `salasana` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+)
+
+// ASUKKAAT
+
+asukkaat | CREATE TABLE `asukkaat` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nimi` varchar(40) DEFAULT NULL,
+  `hetu` char(11) DEFAULT NULL,
+  `info` varchar(1000) DEFAULT NULL,
+  `huoltaja` varchar(40) DEFAULT NULL,
+  `huoltajan_puhelinnumero` varchar(15) DEFAULT NULL,
+  `huoltajan_osoite` varchar(50) DEFAULT NULL,
+  `edunvalvoja` varchar(40) DEFAULT NULL,
+  `edunvalvojan_puhelinnumero` varchar(15) DEFAULT NULL,
+  `edunvalvojan_osoite` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+)
+
+// KIRJAUKSET
+
+kirjaukset | CREATE TABLE `kirjaukset` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `pvm` varchar(15) DEFAULT NULL,
+  `kello` varchar(10) DEFAULT NULL,
+  `kirjaus` varchar(16000) DEFAULT NULL,
+  `kirjaajan_id` int DEFAULT NULL,
+  `asukkaan_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `kirjaajan_id` (`kirjaajan_id`),
+  KEY `asukkaan_id` (`asukkaan_id`),
+  CONSTRAINT `kirjaukset_ibfk_1` FOREIGN KEY (`kirjaajan_id`) REFERENCES `tyontekija` (`id`),
+  CONSTRAINT `kirjaukset_ibfk_2` FOREIGN KEY (`asukkaan_id`) REFERENCES `asukkaat` (`id`)
+)
