@@ -28,12 +28,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
@@ -41,7 +39,8 @@ import javafx.stage.Stage;
 
 public class Hallitsija extends Application {
 
-	
+
+
 
 	String ammatti;
 	Tietokanta sql;
@@ -64,6 +63,8 @@ public class Hallitsija extends Application {
 	Button hb6;
 	Button hb7;
 	Button hb8;
+	Button hb9;
+	Button hb10;
 	List<KirjauksetHenkilo> asukkaat;
 	List<KirjauksetHenkilo> tyontekijat;
 	ObservableList<String> lista;
@@ -96,7 +97,7 @@ public class Hallitsija extends Application {
 		hb2 = new Button("työntekijän lisääminen");
 		g1.add(hb1, 0, 0);
 		g1.add(hb2, 1, 0);
-		
+
 		g2.setVgap(10);
 		g2.setHgap(10);
 		g2.setPadding(new Insets(5, 10, 5, 0));
@@ -104,19 +105,23 @@ public class Hallitsija extends Application {
 		hb5 = new Button("päivitä edunvalvoja");
 		hb6 = new Button("päivitä huoltaja");
 		hb8 = new Button("muuta info");
-		g2.add(hb3, 3, 0);
-		g2.add(hb5, 4, 0);
-		g2.add(hb6, 5, 0);
-		g2.add(hb8, 6, 0);
+		hb9 = new Button("asukkaan tiedot");
+		g2.add(hb3, 0, 0);
+		g2.add(hb5, 1, 0);
+		g2.add(hb6, 2, 0);
+		g2.add(hb8, 3, 0);
+		g2.add(hb9, 4, 0);
 
 		g3.setVgap(10);
 		g3.setHgap(10);
 		g3.setPadding(new Insets(5, 10, 5, 0));
 		hb4 = new Button("poista työntekijä");
 		hb7 = new Button("muuta tietoja");
-		g3.add(hb4, 3, 0);
-		g3.add(hb7, 4, 0);
-		
+		hb10 = new Button("työntekijän tiedot");
+		g3.add(hb4, 1, 0);
+		g3.add(hb7, 2, 0);
+		g3.add(hb10, 3, 0);
+
 		VBox v = new VBox();
 		kehys.setLeft(v);
 		v.setSpacing(15);
@@ -159,7 +164,7 @@ public class Hallitsija extends Application {
 		tyontekijat = new LinkedList<KirjauksetHenkilo>();
 		t2 = new TableView<>();
 		t2.getStyleClass().add("taulukko");
-		
+
 		TableColumn <String, KirjauksetHenkilo> tc1 = new TableColumn<>("Kirjaaja");
 		tc1.setPrefWidth(150);
 		tc1.setCellValueFactory(new PropertyValueFactory<>("kirjaaja"));
@@ -184,7 +189,7 @@ public class Hallitsija extends Application {
 		t2.setMouseTransparent(true);
 		t2.setFocusTraversable(false);
 
-		
+
 		hb1.setOnAction((event)->{
 			asukkaanLisaaminen();
 		});
@@ -216,6 +221,14 @@ public class Hallitsija extends Application {
 			muutainfo();
 		});
 		
+		hb9.setOnAction((event)->{
+			asukkaanTiedot();
+		});
+		
+		hb10.setOnAction((event)->{
+			tyontekijanTiedot();
+		});
+
 		vb2.setOnAction((event)->{
 			sql.yhteydenSulkeminen();
 			System.exit(0);
@@ -381,11 +394,11 @@ public class Hallitsija extends Application {
 			String edunvalvojanpuhelinnumero = gaht6.getText();
 			String tallennaAsukas = sql.lisaaAsukas(asukasnimi, hetu, info, huoltaja, huoltajanpuhelinnumero, huoltajanosoite, edunvalvoja, edunvalvojanpuhelinnumero , edunvalvojanosoite);
 			System.out.println("uusi asukas: " + tallennaAsukas);
-			
+
 			naytalistaa = false;
 			lista.clear();
 			listaa();
-			
+
 		});
 	}
 
@@ -499,7 +512,7 @@ public class Hallitsija extends Application {
 			naytalistat = false;
 			lista2.clear();
 			listat();
-			
+
 			Stage tuikkuna = new Stage();
 			tuikkuna.initModality(Modality.WINDOW_MODAL);
 			tuikkuna.setTitle("työntekijän tunnukset");
@@ -780,6 +793,116 @@ public class Hallitsija extends Application {
 			sql.muutaInfo(asukas, info);
 			hl5.setText("Uusi info: " + info);
 		});
+
+	}
+
+	public void asukkaanTiedot() {
+
+		Stage atikkuna = new Stage();
+		atikkuna.initModality(Modality.WINDOW_MODAL);
+		atikkuna.setTitle("tiedot: " + asukas);
+		BorderPane atiedot = new BorderPane(); 
+		Scene scene3 = new Scene(atiedot, 700, 200);
+		scene3.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		atiedot.getStyleClass().add("kehys");
+		atikkuna.setScene(scene3);
+		atikkuna.show();
+
+		GridPane gpat = new GridPane();
+		gpat.getStyleClass().add("fontti");
+		atiedot.setCenter(gpat);
+		gpat.setAlignment(Pos.CENTER);
+		gpat.setVgap(10);
+		gpat.setHgap(10);
+		gpat.setPadding(new Insets(10, 10, 10, 10));
+
+		Label hetu = new Label();
+		Label info2 = new Label();
+		Label huoltaja = new Label();
+		Label hpuh = new Label();
+		Label hosoite = new Label();
+		Label edunvalvoja = new Label();
+		Label epuh = new Label();
+		Label eosoite = new Label();
+		Label lh = new Label("HUOLTAJAN TIEDOT:");
+		Label le = new Label("EDUNVALVOJAN TIEDOT:");
+		Label ln = new Label("NIMI");
+		Label lp = new Label("PUHELINNUMERO");
+		Label lo = new Label("OSOITE");
+
+		ResultSet rs = sql.etsiAsukas(asukas);
+		try{
+			while(rs.next()) {
+				hetu.setText("HENKILÖTURVATUNNUS: " + rs.getString("hetu"));
+				info2.setText("TÄRKEÄ INFO: " + rs.getString("info"));
+				huoltaja.setText(rs.getString("huoltaja"));
+				hpuh.setText(rs.getString("huoltajan_puhelinnumero"));
+				hosoite.setText(rs.getString("huoltajan_osoite"));
+				edunvalvoja.setText(rs.getString("edunvalvoja"));
+				epuh.setText(rs.getString("edunvalvojan_puhelinnumero"));
+				eosoite.setText(rs.getString("edunvalvojan_osoite"));
+			}} catch (Exception e1) {
+				System.out.println(e1);
+			}
+
+
+		gpat.add(hetu, 0, 0,5,1);
+		gpat.add(info2, 0, 1,5,1);
+		gpat.add(ln, 1, 2);
+		gpat.add(lp, 2, 2);
+		gpat.add(lo, 3, 2);
+		gpat.add(lh, 0, 3);
+		gpat.add(huoltaja, 1, 3);
+		gpat.add(hpuh, 2, 3);
+		gpat.add(hosoite, 3, 3);
+		gpat.add(le, 0, 4);
+		gpat.add(edunvalvoja, 1, 4);
+		gpat.add(epuh, 2, 4);
+		gpat.add(eosoite, 3, 4);
+
+	}
+
+	public void tyontekijanTiedot() {
+
+		Stage ttikkuna = new Stage();
+		ttikkuna.initModality(Modality.WINDOW_MODAL);
+		ttikkuna.setTitle("tiedot: " + tyontekija);
+		BorderPane ttiedot = new BorderPane(); 
+		Scene scene3 = new Scene(ttiedot, 700, 200);
+		scene3.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		ttiedot.getStyleClass().add("kehys");
+		ttikkuna.setScene(scene3);
+		ttikkuna.show();
+
+		GridPane gptt = new GridPane();
+		gptt.getStyleClass().add("fontti");
+		ttiedot.setCenter(gptt);
+		gptt.setAlignment(Pos.CENTER);
+		gptt.setVgap(10);
+		gptt.setHgap(10);
+		gptt.setPadding(new Insets(10, 10, 10, 10));
+
+		Label hetu = new Label();
+		Label puh = new Label();
+		Label osoite = new Label();
+		Label ammatti = new Label();
+
+		ResultSet rs = sql.etsiTyontekija(tyontekija);
+		try{
+			while(rs.next()) {
+				hetu.setText("HENKILÖTURVATUNNUS: " + rs.getString("hetu"));
+				puh.setText("PUHELINNUMERO: " + rs.getString("puhelinnumero"));
+				osoite.setText("OSOITE: " + rs.getString("osoite"));
+				ammatti.setText("AMMATTI: " + rs.getString("ammatti"));
+			}} catch (Exception e1) {
+				System.out.println(e1);
+			}
+
+
+		gptt.add(hetu, 0, 0);
+		gptt.add(puh, 0, 1);
+		gptt.add(osoite, 0, 2);
+		gptt.add(ammatti, 0, 3);
 
 	}
 
