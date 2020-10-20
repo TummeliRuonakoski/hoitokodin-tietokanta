@@ -42,7 +42,7 @@ import javafx.scene.text.Font;
 
 public class Tyontekijat extends Application {
 
-	
+
 	Tietokanta sql;
 	int sisaan = -1;
 	int tyontekijanid;
@@ -56,8 +56,8 @@ public class Tyontekijat extends Application {
 	TableView kt2;
 	String pvm2;
 	TextArea kt1;
-	
-	
+
+
 	@Override
 	public void start(Stage ikkuna) throws SQLException{
 
@@ -90,7 +90,7 @@ public class Tyontekijat extends Application {
 		Button b1 = new Button("kirjaudu");
 		Button b2 = new Button("salasana unohtunut");
 		Label l3 = new Label(" ");
-		
+
 		c1.selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -112,11 +112,11 @@ public class Tyontekijat extends Application {
 		kirjautuminen.add(b1, 0, 3);
 		kirjautuminen.add(b2, 1, 3);
 
-		
 
-		
+
+
 		BorderPane sisalla = new BorderPane();
-		
+
 		VBox asukkaat = new VBox();
 		sisalla.setLeft(asukkaat);
 		asukkaat.setSpacing(30);
@@ -126,8 +126,8 @@ public class Tyontekijat extends Application {
 		val1.setFont(new Font("Text Font", 35));
 		Label val3 = new Label("ASUKKAAT");
 		Button vb1 = new Button("sulje ohjelma");
-		
-		
+
+
 		ListView vlv1 = new ListView(); 
 		ResultSet rs = sql.haeAsukkaat();
 		ObservableList<String> lista = FXCollections.observableArrayList();
@@ -138,11 +138,11 @@ public class Tyontekijat extends Application {
 		vlv1.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		asukkaat.getChildren().addAll(val1,val3,vlv1,vb1);
 
-		
+
 		asukkaatlista = new LinkedList<KirjauksetHenkilo>();
 		kt2 = new TableView<KirjauksetHenkilo>();
 		ObservableList<KirjauksetHenkilo> lista2 = FXCollections.observableArrayList();
-		
+
 		TableColumn <KirjauksetHenkilo, String> ktc1 = new TableColumn("kirjaaja");
 		ktc1.setPrefWidth(150);
 		ktc1.setCellValueFactory(new PropertyValueFactory<KirjauksetHenkilo, String>("kirjaaja"));
@@ -170,7 +170,7 @@ public class Tyontekijat extends Application {
 			}
 		}catch (Exception e) {
 		};
-		
+
 
 		GridPane kirjaus = new GridPane();
 		kirjaus.setAlignment(Pos.CENTER);
@@ -178,7 +178,9 @@ public class Tyontekijat extends Application {
 		kirjaus.setHgap(10);
 		kirjautuminen.setPadding(new Insets(60, 10, 0, 10));
 		sisalla.setCenter(kirjaus);
-		info = new Label();
+		info = new Label("ASUKAS ei ole valittu");
+		info.getStyleClass().add("fontti2");
+		Button kb1 = new Button("asukkaan tiedot");
 
 		DateTimeFormatter df = DateTimeFormatter.ofPattern("HH:mm");
 		LocalTime aika = LocalTime.now();
@@ -192,26 +194,27 @@ public class Tyontekijat extends Application {
 
 		Label kl3 = new Label("KIRJAUS");
 		kt1 = new TextArea();
-		Button kb1 = new Button("TALLENNA");
+		Button kb2 = new Button("TALLENNA");
 		Label kl4 = new Label("KIRJATUT");
 		DatePicker kd2 = new DatePicker();
 		kd2.setValue(LocalDate.now());
 		kd2.setShowWeekNumbers(true);
-		
+
 		kirjaus.setMargin(kd2, new Insets(0, 0, 0, - 100));
-		
+
 		kirjaus.add(info, 0, 0);
+		kirjaus.add(kb1, 1, 0);
 		kirjaus.add(kl2, 0, 1);
 		kirjaus.add(kd1, 0, 2);
 		kirjaus.add(kl3, 0, 3);
 		kirjaus.add(kt1, 0, 4, 3,1);
-		kirjaus.add(kb1, 0, 5);
+		kirjaus.add(kb2, 0, 5);
 		kirjaus.add(kl4, 0, 6);
 		kirjaus.add(kd2, 1, 6);
 		kirjaus.add(kt2, 0, 7, 6,1);
-		
-		
-		
+
+
+
 		b1.setOnAction((event) -> {
 			sisaan = sql.tarkistaKirjautuja(t1.getText(), p1.getText());
 			if(sisaan >= 0) {
@@ -224,10 +227,14 @@ public class Tyontekijat extends Application {
 				l3.setText("Tarkista tunnus tai salasana");
 			}
 		});
-		
-		b2.setOnAction((event) -> salasananMuuttaminen());
 
+		b2.setOnAction((event) -> salasananMuuttaminen());
+		
 		kb1.setOnAction((event) -> {
+			asukkaanTiedot();
+		});
+
+		kb2.setOnAction((event) -> {
 			naytalistaa = false;
 			kt2.getItems().clear();
 			asukkaatlista.clear();
@@ -235,7 +242,7 @@ public class Tyontekijat extends Application {
 			sql.kirjaaminen(pvm, kello, teksti, tyontekijanid, asukkaanid);
 			taulukko();
 		});
-		
+
 		kd2.setOnAction(event -> {
 			java.sql.Date date2 = java.sql.Date.valueOf(kd2.getValue());
 			pvm2 = date2.toString();
@@ -244,17 +251,16 @@ public class Tyontekijat extends Application {
 			asukkaatlista.clear();
 			taulukkopvm();
 		});
-		
+
 		vb1.setOnAction((event)->{
 			sql.yhteydenSulkeminen();
 			System.exit(0);
 		});
-		
+
 		vlv1.setOnMouseClicked(e ->{
 			asukas  = vlv1.getSelectionModel().getSelectedItem().toString();
 			asukkaanid = sql.haeAsukkaanId(asukas);
 			info.setText("ASUKAS " + asukas);
-			info.getStyleClass().add("fontti2");
 			kt2.setItems(lista2);
 			info();
 			naytalistaa = false;
@@ -268,9 +274,9 @@ public class Tyontekijat extends Application {
 		ikkuna.show();
 
 	}
-	
+
 	public void taulukko() {
-		
+
 		ResultSet rs2 = sql.haeKirjauksetA(asukas);
 		try{
 			while(rs2.next()) {
@@ -290,11 +296,11 @@ public class Tyontekijat extends Application {
 		} catch (Exception e1) {
 			System.out.println(e1);
 		}
-		
+
 	}
-	
+
 	public void taulukkopvm() {
-		
+
 		ResultSet rs3 = sql.haeKirjauksetApvm(pvm2, asukas);
 		try{
 			while(rs3.next()) {
@@ -314,7 +320,7 @@ public class Tyontekijat extends Application {
 		} catch (Exception e1) {
 			System.out.println(e1);
 		}
-		
+
 	}
 
 	public void salasananMuuttaminen() {
@@ -362,7 +368,7 @@ public class Tyontekijat extends Application {
 
 
 	}
-	
+
 	public void info() {
 
 		if(!sql.haeInfo(asukas).isEmpty()) {
@@ -373,8 +379,76 @@ public class Tyontekijat extends Application {
 			alert.showAndWait();
 		}
 	}
-	
+
+	public void asukkaanTiedot() {
+		
+		Stage atikkuna = new Stage();
+		atikkuna.initModality(Modality.WINDOW_MODAL);
+		atikkuna.setTitle("tiedot: " + asukas);
+		BorderPane atiedot = new BorderPane(); 
+		Scene scene3 = new Scene(atiedot, 700, 200);
+		scene3.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		atiedot.getStyleClass().add("kehys");
+		atikkuna.setScene(scene3);
+		atikkuna.show();
+
+		GridPane gpat = new GridPane();
+		gpat.getStyleClass().add("fontti");
+		atiedot.setCenter(gpat);
+		gpat.setAlignment(Pos.CENTER);
+		gpat.setVgap(10);
+		gpat.setHgap(10);
+		gpat.setPadding(new Insets(10, 10, 10, 10));
+		
+		Label hetu = new Label();
+		Label info2 = new Label();
+		Label huoltaja = new Label();
+		Label hpuh = new Label();
+		Label hosoite = new Label();
+		Label edunvalvoja = new Label();
+		Label epuh = new Label();
+		Label eosoite = new Label();
+		Label lh = new Label("HUOLTAJAN TIEDOT:");
+		Label le = new Label("EDUNVALVOJAN TIEDOT:");
+		Label ln = new Label("NIMI");
+		Label lp = new Label("PUHELINNUMERO");
+		Label lo = new Label("OSOITE");
+		
+		ResultSet rs = sql.etsiAsukas(asukas);
+		try{
+			while(rs.next()) {
+				hetu.setText("HENKILÖTURVATUNNUS: " + rs.getString("hetu"));
+				info2.setText("TÄRKEÄ INFO: " + rs.getString("info"));
+				huoltaja.setText(rs.getString("huoltaja"));
+				hpuh.setText(rs.getString("huoltajan_puhelinnumero"));
+				hosoite.setText(rs.getString("huoltajan_osoite"));
+				edunvalvoja.setText(rs.getString("edunvalvoja"));
+				epuh.setText(rs.getString("edunvalvojan_puhelinnumero"));
+				eosoite.setText(rs.getString("edunvalvojan_osoite"));
+			}} catch (Exception e1) {
+				System.out.println(e1);
+			}
+
+
+		gpat.add(hetu, 0, 0,5,1);
+		gpat.add(info2, 0, 1,5,1);
+		gpat.add(ln, 1, 2);
+		gpat.add(lp, 2, 2);
+		gpat.add(lo, 3, 2);
+		gpat.add(lh, 0, 3);
+		gpat.add(huoltaja, 1, 3);
+		gpat.add(hpuh, 2, 3);
+		gpat.add(hosoite, 3, 3);
+		gpat.add(le, 0, 4);
+		gpat.add(edunvalvoja, 1, 4);
+		gpat.add(epuh, 2, 4);
+		gpat.add(eosoite, 3, 4);
+
+	}
+
 	public static void main(String[] args) {
 		launch(args);
 	}
+
+
 }
