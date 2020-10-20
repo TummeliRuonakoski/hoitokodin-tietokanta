@@ -41,15 +41,7 @@ import javafx.stage.Stage;
 
 public class Hallitsija extends Application {
 
-	//TOIMII
-	//asukkaan lisääminen
-	//asukkaan poistaminen
-	//edunvalvojan tietojen vaihtaminen
-	//huoltajan tietojen vaihtaminen
-	//työntekijän poistaminen
-	//työntekijän tietojen poistaminen
-	//listat
-
+	
 
 	String ammatti;
 	Tietokanta sql;
